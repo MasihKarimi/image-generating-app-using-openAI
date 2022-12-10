@@ -1,31 +1,33 @@
 const {OpenAIApi, Configuration} = require("openai");
 
 const configuration = new Configuration({
-    apiKey: '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',
+    apiKey: '',
 });
 
 //OpenAIApi.
 const openai = new OpenAIApi(configuration);
 
-//openai.api_key = "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";
 
 // this function is responsible for generating image from a text input
 
 const generateImage = async (req, res) => {
+    // this is for getting the prompt from the user
+    const { prompt, size, n } = req.body;
+
+    const imageSize = size === 'small' ? '256x256' : size === 'medium' ? '512x512' : '1024x1024'
   try {
-    const response = await openai.createImage({
-      prompt: "coding guy at forestc",
-      n: 2,
-      size: "512x512",
-    });
+    openai.createImage({})
+    const response = await openai.createImage({prompt, n, size:imageSize});
     // generated image url
-    const imageUrl = response.data.data[0].url;
+    //const imageUrl = response.data.data[0].url;
+    const imageUrls = response.data.data.map((image) => image.url);
+
 
     // display the response data
 
     res.status(200).json({
       success: true,
-      data: imageUrl,
+      data: imageUrls,
     });
   } catch (error) {
     if (error.response) {
